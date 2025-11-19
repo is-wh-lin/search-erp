@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <rect width="512" height="512" fill="#3b82f6" rx="64"/>
+  <g fill="white">
+    <!-- Database/File icon -->
+    <path d="M256 80c-70.7 0-128 28.7-128 64v224c0 35.3 57.3 64 128 64s128-28.7 128-64V144c0-35.3-57.3-64-128-64zm0 32c53 0 96 21.5 96 48s-43 48-96 48-96-21.5-96-48 43-48 96-48zm0 256c-53 0-96-21.5-96-48v-32c23.5 16.5 57.3 24 96 24s72.5-7.5 96-24v32c0 26.5-43 48-96 48zm0-96c-53 0-96-21.5-96-48v-32c23.5 16.5 57.3 24 96 24s72.5-7.5 96-24v32c0 26.5-43 48-96 48z"/>
+    <!-- Search icon overlay -->
+    <circle cx="380" cy="380" r="48" fill="#3b82f6" stroke="white" stroke-width="8"/>
+    <path d="M410 410l40 40" stroke="white" stroke-width="16" stroke-linecap="round"/>
+  </g>
+</svg>
