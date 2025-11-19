@@ -3,18 +3,19 @@ import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { throttle } from '../../utils/renderOptimization'
 
 // Props
-interface VirtualScrollerProps {
-  items: T[]
-  itemHeight?: number
-  bufferSize?: number
-  threshold?: number
-}
-
-const props = withDefaults(defineProps<VirtualScrollerProps>(), {
-  itemHeight: 80,
-  bufferSize: 5,
-  threshold: 100,
-})
+const props = withDefaults(
+  defineProps<{
+    items: T[]
+    itemHeight?: number
+    bufferSize?: number
+    threshold?: number
+  }>(),
+  {
+    itemHeight: 80,
+    bufferSize: 5,
+    threshold: 100,
+  }
+)
 
 // Emits
 const emit = defineEmits<{
