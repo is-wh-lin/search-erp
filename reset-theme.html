@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>重置主題設定</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      max-width: 600px;
+      margin: 50px auto;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+
+    .container {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    .info {
+      background: #e3f2fd;
+      padding: 15px;
+      border-radius: 5px;
+      margin-bottom: 20px;
+      border-left: 4px solid #2196f3;
+    }
+
+    .success {
+      background: #e8f5e9;
+      padding: 15px;
+      border-radius: 5px;
+      margin-bottom: 20px;
+      border-left: 4px solid #4caf50;
+    }
+
+    button {
+      background: #2196f3;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      margin-right: 10px;
+      margin-bottom: 10px;
+    }
+
+    button:hover {
+      background: #1976d2;
+    }
+
+    pre {
+      background: #f5f5f5;
+      padding: 10px;
+      border-radius: 5px;
+      overflow-x: auto;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>🔄 重置主題設定</h1>
+
+    <div class="info">
+      <strong>當前設定：</strong>
+      <pre id="currentSettings">載入中...</pre>
+    </div>
+
+    <div id="result"></div>
+
+    <div style="margin-top: 20px;">
+      <button onclick="resetToLight()">重置為淺色模式</button>
+      <button onclick="resetToDark()">重置為深色模式</button>
+      <button onclick="clearSettings()">清除所有設定</button>
+      <button onclick="goToApp()">返回應用</button>
+    </div>
+  </div>
+
+  <script>
+    function updateStatus() {
+      const settings = localStorage.getItem('erp-query-settings');
+      if (settings) {
+        try {
+          const parsed = JSON.parse(settings);
+          document.getElementById('currentSettings').textContent = JSON.stringify(parsed, null, 2);
+        } catch (e) {
+          document.getElementById('currentSettings').textContent = settings;
+        }
+      } else {
+        document.getElementById('currentSettings').textContent = '(無設定)';
+      }
+    }
+
+    function showResult(message) {
+      const resultDiv = document.getElementById('result');
+      resultDiv.className = 'success';
+      resultDiv.innerHTML = `<strong>✅ 完成：</strong>${message}`;
+      updateStatus();
+    }
+
+    function resetToLight() {
+      const settings = {
+        data: {
+          theme: 'light',
+          fontSize: 'medium',
+          visibleColumns: ['fieldNumber', 'fieldName', 'fileCode', 'fileName', 'dataType', 'length', 'fieldDescription', 'remark'],
+          searchHistoryEnabled: true
+        },
+        timestamp: Date.now()
+      };
+      localStorage.setItem('erp-query-settings', JSON.stringify(settings));
+      showResult('已重置為淺色模式。請返回應用查看效果。');
+    }
+
+    function resetToDark() {
+      const settings = {
+        data: {
+          theme: 'dark',
+          fontSize: 'medium',
+          visibleColumns: ['fieldNumber', 'fieldName', 'fileCode', 'fileName', 'dataType', 'length', 'fieldDescription', 'remark'],
+          searchHistoryEnabled: true
+        },
+        timestamp: Date.now()
+      };
+      localStorage.setItem('erp-query-settings', JSON.stringify(settings));
+      showResult('已重置為深色模式。請返回應用查看效果。');
+    }
+
+    function clearSettings() {
+      localStorage.removeItem('erp-query-settings');
+      showResult('已清除所有設定。應用將使用預設設定（淺色模式）。');
+    }
+
+    function goToApp() {
+      window.location.href = '/';
+    }
+
+    // 初始化
+    updateStatus();
+  </script>
+</body>
+
+</html>

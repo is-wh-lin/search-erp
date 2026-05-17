@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="dark">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dark Mode 測試</title>
+  <style>
+    /* 模擬 Tailwind dark mode */
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: system-ui, -apple-system, sans-serif;
+    }
+
+    /* Light mode (default) */
+    .test-bg {
+      background-color: #f9fafb;
+      /* gray-50 */
+      color: #111827;
+      /* gray-900 */
+    }
+
+    .test-card {
+      background-color: white;
+      color: #111827;
+    }
+
+    /* Dark mode */
+    .dark .test-bg {
+      background-color: #111827;
+      /* gray-900 */
+      color: white;
+    }
+
+    .dark .test-card {
+      background-color: #1f2937;
+      /* gray-800 */
+      color: white;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .card {
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+
+    button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      margin-right: 10px;
+    }
+
+    .btn-primary {
+      background-color: #3b82f6;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background-color: #2563eb;
+    }
+
+    code {
+      background-color: rgba(0, 0, 0, 0.1);
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-family: monospace;
+    }
+  </style>
+</head>
+
+<body class="test-bg">
+  <div class="container">
+    <h1>🌓 Dark Mode 測試</h1>
+
+    <div class="card test-card">
+      <h2>當前狀態</h2>
+      <p>HTML class: <code id="htmlClass"></code></p>
+      <p>背景應該會根據 dark class 改變顏色</p>
+    </div>
+
+    <div class="card test-card">
+      <h2>測試按鈕</h2>
+      <button class="btn-primary" onclick="toggleDark()">切換 Dark Mode</button>
+      <button class="btn-primary" onclick="addDark()">添加 dark class</button>
+      <button class="btn-primary" onclick="removeDark()">移除 dark class</button>
+    </div>
+
+    <div class="card test-card">
+      <h2>說明</h2>
+      <p>如果這個頁面的背景和卡片顏色會隨著 dark class 改變，表示 CSS 選擇器正常工作。</p>
+      <p>如果主應用的 dark mode 不工作，可能是：</p>
+      <ul>
+        <li>Tailwind CSS 沒有正確編譯 dark: 變體</li>
+        <li>CSS 檔案沒有正確載入</li>
+        <li>有其他 CSS 覆蓋了 dark mode 樣式</li>
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    function updateStatus() {
+      document.getElementById('htmlClass').textContent =
+        document.documentElement.className || '(empty)';
+    }
+
+    function toggleDark() {
+      document.documentElement.classList.toggle('dark');
+      updateStatus();
+    }
+
+    function addDark() {
+      document.documentElement.classList.add('dark');
+      updateStatus();
+    }
+
+    function removeDark() {
+      document.documentElement.classList.remove('dark');
+      updateStatus();
+    }
+
+    updateStatus();
+  </script>
+</body>
+
+</html>

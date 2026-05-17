@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>清除儲存空間</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      max-width: 600px;
+      margin: 50px auto;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+
+    .container {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    .info {
+      background: #e3f2fd;
+      padding: 15px;
+      border-radius: 5px;
+      margin-bottom: 20px;
+      border-left: 4px solid #2196f3;
+    }
+
+    .warning {
+      background: #fff3e0;
+      padding: 15px;
+      border-radius: 5px;
+      margin-bottom: 20px;
+      border-left: 4px solid #ff9800;
+    }
+
+    .success {
+      background: #e8f5e9;
+      padding: 15px;
+      border-radius: 5px;
+      margin-bottom: 20px;
+      border-left: 4px solid #4caf50;
+    }
+
+    button {
+      background: #2196f3;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      margin-right: 10px;
+      margin-bottom: 10px;
+    }
+
+    button:hover {
+      background: #1976d2;
+    }
+
+    button.danger {
+      background: #f44336;
+    }
+
+    button.danger:hover {
+      background: #d32f2f;
+    }
+
+    pre {
+      background: #f5f5f5;
+      padding: 10px;
+      border-radius: 5px;
+      overflow-x: auto;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>🧹 清除儲存空間</h1>
+
+    <div class="warning">
+      <strong>⚠️ 注意：</strong>清除 LocalStorage 會移除所有已儲存的設定（包括主題、字體大小等）。
+      清除 IndexedDB 會移除快取的 ERP 資料。
+    </div>
+
+    <div id="status" class="info">
+      <strong>當前狀態：</strong>
+      <pre id="storageInfo">載入中...</pre>
+    </div>
+
+    <div id="result"></div>
+
+    <div style="margin-top: 20px;">
+      <button onclick="clearDataCache()">清除 ERP 資料快取 (LocalStorage)</button>
+      <button onclick="clearAllLocalStorage()" class="danger">清除所有 LocalStorage</button>
+      <button onclick="clearIndexedDB()">清除 IndexedDB</button>
+      <button onclick="clearAll()" class="danger">清除全部</button>
+      <button onclick="location.reload()">重新整理頁面</button>
+    </div>
+  </div>
+
+  <script>
+    function formatBytes(bytes) {
+      if (bytes === 0) return '0 Bytes';
+      const k = 1024;
+      const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+    }
+
+    function getLocalStorageSize() {
+      let total = 0;
+      const items = {};
+      for (let key in localStorage) {
+        if (localStorage.hasOwnProperty(key)) {
+          const size = (localStorage[key].length + key.length) * 2; // UTF-16
+          total += size;
+          items[key] = formatBytes(size);
+        }
+      }
+      return { total, items };
+    }
+
+    function updateStatus() {
+      const lsInfo = getLocalStorageSize();
+      const info = `LocalStorage 使用量: ${formatBytes(lsInfo.total)}
+項目數量: ${Object.keys(lsInfo.items).length}
+
+各項目大小:
+${Object.entries(lsInfo.items).map(([key, size]) => `  ${key}: ${size}`).join('\n')}`;
+
+      document.getElementById('storageInfo').textContent = info;
+    }
+
+    function showResult(message, type = 'success') {
+      const resultDiv = document.getElementById('result');
+      resultDiv.className = type;
+      resultDiv.innerHTML = `<strong>${type === 'success' ? '✅ 成功' : '❌ 錯誤'}：</strong>${message}`;
+      updateStatus();
+    }
+
+    function clearDataCache() {
+      try {
+        localStorage.removeItem('erp-data-cache');
+        showResult('已清除 ERP 資料快取');
+      } catch (e) {
+        showResult('清除失敗: ' + e.message, 'warning');
+      }
+    }
+
+    function clearAllLocalStorage() {
+      if (confirm('確定要清除所有 LocalStorage 資料嗎？這將移除所有設定。')) {
+        try {
+          localStorage.clear();
+          showResult('已清除所有 LocalStorage 資料');
+        } catch (e) {
+          showResult('清除失敗: ' + e.message, 'warning');
+        }
+      }
+    }
+
+    async function clearIndexedDB() {
+      try {
+        const dbs = await indexedDB.databases();
+        for (const db of dbs) {
+          if (db.name) {
+            indexedDB.deleteDatabase(db.name);
+          }
+        }
+        showResult('已清除所有 IndexedDB 資料');
+      } catch (e) {
+        showResult('清除失敗: ' + e.message, 'warning');
+      }
+    }
+
+    async function clearAll() {
+      if (confirm('確定要清除所有儲存資料嗎？這將移除所有設定和快取。')) {
+        try {
+          localStorage.clear();
+          const dbs = await indexedDB.databases();
+          for (const db of dbs) {
+            if (db.name) {
+              indexedDB.deleteDatabase(db.name);
+            }
+          }
+          showResult('已清除所有儲存資料');
+        } catch (e) {
+          showResult('清除失敗: ' + e.message, 'warning');
+        }
+      }
+    }
+
+    // 初始化
+    updateStatus();
+    setInterval(updateStatus, 2000);
+  </script>
+</body>
+
+</html>
